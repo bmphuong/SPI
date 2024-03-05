@@ -52,6 +52,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 SPI.list \
 
+OBJCOPY_HEX += \
+SPI.hex \
+
 
 # All Target
 all: main-build
@@ -75,12 +78,17 @@ SPI.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+SPI.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "SPI.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) SPI.elf SPI.list SPI.map default.size.stdout
+	-$(RM) SPI.elf SPI.hex SPI.list SPI.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
